@@ -4,14 +4,13 @@ FROM node:lts-alpine as build-stage
 WORKDIR /temp
 
 # Copying package files and installing dependencies
-COPY package.json yarn.lock .
-RUN yarn config set registry https://registry.npmmirror.com/ && \
-    yarn install --frozen-lockfile && \
-    yarn cache clean
+COPY package.json package-lock.json .
+RUN npm install --registry=https://registry.npmmirror.com/ --frozen-lockfile && \
+    npm cache clean --force
 
 # Copying source files and building the application
 COPY . .
-RUN yarn build
+RUN npm run build
 
 # production stage
 FROM nginx:stable-alpine as production-stage
